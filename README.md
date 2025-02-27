@@ -38,14 +38,15 @@ video-editor/
 ```bash
 git clone https://github.com/YOUR_GITHUB_USERNAME/video-editor.git
 cd video-editor
-
+```
 2️⃣ Build the Docker Image
-
+```bash
 docker build -t video-editor .
-
+```
 3️⃣ Run the Container
+```bash
 docker run --rm -v "$(pwd)/assets:/app/assets" video-editor
-
+```
 After execution, the processed video will be saved as:
 assets/output.mp4
 
