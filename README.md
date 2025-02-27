@@ -19,6 +19,7 @@ It applies a **grayscale filter** and overlays an image (`overlay.png`) that **b
 ---
 
 ## 📌 Project Structure
+```bash
 video-editor/
 │── src/
 │   ├── main.py           # Runs the video processing
@@ -29,8 +30,7 @@ video-editor/
 │── requirements.txt      # Python dependencies
 │── Dockerfile            # Docker setup
 │── README.md             # Documentation
-
----
+```
 
 ## 📌 How to Use
 
