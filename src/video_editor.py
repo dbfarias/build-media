@@ -2,13 +2,14 @@ import cv2
 import numpy as np
 
 class VideoEditor:
-    def __init__(self, input_path, output_path, overlay_path):
+    def __init__(self, input_path, output_path, overlay_path, text):
         self.input_path = input_path
         self.output_path = output_path
         self.overlay_path = overlay_path
+        self.text = text
 
     def apply_effects(self):
-        """Aplica efeitos ao vídeo, incluindo filtro cinza e overlay piscando"""
+        """Aplica efeitos ao vídeo, incluindo filtro cinza, overlay piscando e texto centralizado"""
 
         cap = cv2.VideoCapture(self.input_path)
 
@@ -21,7 +22,7 @@ class VideoEditor:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         out = cv2.VideoWriter(self.output_path, fourcc, fps, (frame_width, frame_height))
 
-        # Carrega a imagem de overlay (garante que canais de transparência sejam processados)
+        # Carrega a imagem de overlay
         overlay = cv2.imread(self.overlay_path, cv2.IMREAD_UNCHANGED)
 
         # Redimensionar overlay para garantir que ele caiba no vídeo (máximo 20% do tamanho do vídeo)
@@ -65,6 +66,17 @@ class VideoEditor:
 
                 # Substitui a região original pelo overlay mesclado
                 gray_frame[y_offset:y_offset + overlay_height, x_offset:x_offset + overlay_width] = roi
+
+            # 📌 Adicionando o texto no centro do vídeo
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 1.5  # Tamanho da fonte
+            font_color = (0, 255, 255)  # Amarelo (BGR)
+            thickness = 3
+            text_size = cv2.getTextSize(self.text, font, font_scale, thickness)[0]
+            text_x = (frame_width - text_size[0]) // 2
+            text_y = (frame_height + text_size[1]) // 2
+
+            cv2.putText(gray_frame, self.text, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
 
             # Escreve o frame no vídeo de saída
             out.write(gray_frame)

@@ -24,3 +24,4 @@ COPY . .
 
 # Comando padrão do contêiner
 CMD ["python", "src/main.py"]
+ENTRYPOINT ["python", "src/main.py"]
