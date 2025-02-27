@@ -1,27 +1,35 @@
 import cv2
-import numpy as np
-import moviepy.editor as mp
-from PIL import Image
-from moviepy.video.VideoClip import ImageClip
 
 class VideoEditor:
-    def __init__(self, input_video):
-        self.video = mp.VideoFileClip(input_video)
+    def __init__(self, input_path, output_path):
+        self.input_path = input_path
+        self.output_path = output_path
 
-    def remove_background(self, lower_bound=(35, 50, 50), upper_bound=(85, 255, 255)):
-        def process_frame(frame):
-            hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-            mask = cv2.inRange(hsv, np.array(lower_bound), np.array(upper_bound))
-            frame[mask > 0] = [255, 255, 255]
-            return frame
+    def apply_gray_filter(self):
+        """Aplica filtro preto e branco ao vídeo"""
+        cap = cv2.VideoCapture(self.input_path)
 
-        self.video = self.video.fl_image(process_frame)
+        # Obtém detalhes do vídeo
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
 
-    def add_overlay(self, image_path, position=("center", "top")):
-        image = Image.open(image_path).resize((200, 200))
-        image_clip = ImageClip(np.array(image), duration=self.video.duration)
-        image_clip = image_clip.set_position(position)
-        self.video = mp.CompositeVideoClip([self.video, image_clip])
+        # Criando um vídeo de saída
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(self.output_path, fourcc, fps, (frame_width, frame_height))
 
-    def export(self, output_path="output.mp4"):
-        self.video.write_videofile(output_path, codec="libx264", fps=self.video.fps)
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Aplicar efeito preto e branco
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray_frame = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2BGR)
+
+            # Escrever o frame no vídeo de saída
+            out.write(gray_frame)
+
+        cap.release()
+        out.release()
+        print(f"Vídeo processado e salvo em {self.output_path}")

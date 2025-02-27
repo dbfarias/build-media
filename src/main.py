@@ -1,7 +1,8 @@
 from video_editor import VideoEditor
 
 if __name__ == "__main__":
-    editor = VideoEditor("assets/input_video.mp4")
-    editor.remove_background()
-    editor.add_overlay("assets/overlay.png")
-    editor.export("assets/output.mp4")
+    input_video = "assets/input_video.mp4"
+    output_video = "assets/output.mp4"
+
+    editor = VideoEditor(input_video, output_video)
+    editor.apply_gray_filter()
